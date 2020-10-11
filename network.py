@@ -541,8 +541,8 @@ class network():
                 tb.add_histogram("Input", x, it)
                 # tb.add_histogram("Input/gradients", x.grad, it)
                 for name, param in self.net_gen.named_parameters():
-                    tb.add_histogram(name, param, it)
-                    tb.add_histogram(name, param.grad, it)
+                    tb.add_histogram(name, param.data, it)
+                    tb.add_histogram(name + "/gradients", param.grad, it)
 
             if noisify_network > 0.0:
                ''' reset the network's parameters '''
