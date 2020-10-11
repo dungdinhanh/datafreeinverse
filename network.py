@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
+from torch.utils.tensorboard import SummaryWriter
 
 from nets_mlp import netcls, netdis, netstd, netgen, netenc, weights_init
 from hook     import bn1dfeathook, genbn1dfeathook
@@ -369,7 +370,7 @@ class network():
                                      batchnorm_transfer = 0.0, \
                                      use_discriminator  = 0.0, \
                                      n_iters = 100):
-        
+        tb = SummaryWriter()
         if use_generator == True:
             z    = torch.randn((self.n_samples, self.latent_dim), requires_grad=False, device=self.device, dtype=torch.float)
             if discrete_label == True:
@@ -534,6 +535,16 @@ class network():
             loss.backward()
             optimizer.step()
 
+            if it % 100 == 0:
+                tb.add_scalar("Total loss: ", loss, it)
+                tb.add_scalar("Loss batchnorm", loss_bn, it)
+                tb.add_histogram("Input", x, it)
+                tb.add_histogram("Input/gradients", x.grad, it)
+                net_gen_state_dict = self.net_gen.state_dict()
+                for key, value in net_gen_state_dict:
+                    tb.add_histogram(key, value)
+                    tb.add_histogram(key + "/gradient", value.grad, it)
+
             if noisify_network > 0.0:
                ''' reset the network's parameters '''
                reset_params(self.net, orig_params)
@@ -600,7 +611,8 @@ class network():
            x_np = x.cpu().detach().numpy()
         else:
            x_np = x.detach().numpy()
-       
+        tb.close()
         ax[1].scatter(x_np[:,0], x_np[:,1], c='b', cmap=plt.cm.Accent)
         plt.savefig(self.basedir + "%s.png" % (self.imgname))
         plt.show()
+
