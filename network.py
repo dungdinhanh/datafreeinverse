@@ -539,7 +539,7 @@ class network():
                 tb.add_scalar("Total loss: ", loss, it)
                 tb.add_scalar("Loss batchnorm", loss_bn, it)
                 tb.add_histogram("Input", x, it)
-                tb.add_histogram("Input/gradients", x.grad, it)
+                # tb.add_histogram("Input/gradients", x.grad, it)
                 net_gen_state_dict = self.net_gen.state_dict()
                 for key, value in net_gen_state_dict:
                     tb.add_histogram(key, value)
