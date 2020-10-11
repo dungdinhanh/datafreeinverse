@@ -540,10 +540,9 @@ class network():
                 tb.add_scalar("Loss batchnorm", loss_bn, it)
                 tb.add_histogram("Input", x, it)
                 # tb.add_histogram("Input/gradients", x.grad, it)
-                net_gen_state_dict = self.net_gen.state_dict()
-                for key, value in net_gen_state_dict.items():
-                    tb.add_histogram(key, value)
-                    tb.add_histogram(key + "/gradient", value.grad, it)
+                for name, param in self.net_gen.named_parameters():
+                    tb.add_histogram(name, param, it)
+                    tb.add_histogram(name, param.grad, it)
 
             if noisify_network > 0.0:
                ''' reset the network's parameters '''
