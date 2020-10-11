@@ -541,7 +541,7 @@ class network():
                 tb.add_histogram("Input", x, it)
                 # tb.add_histogram("Input/gradients", x.grad, it)
                 net_gen_state_dict = self.net_gen.state_dict()
-                for key, value in net_gen_state_dict:
+                for key, value in net_gen_state_dict.items():
                     tb.add_histogram(key, value)
                     tb.add_histogram(key + "/gradient", value.grad, it)
 
